@@ -7,6 +7,7 @@ contract SolidityDataTypes {
     uint public myUint256;
     int public myInt;
     uint8 public myUint8;
+    string public myString;
 
     function setMyBool(bool _myBool) public {
         myBool = _myBool;
@@ -24,5 +25,14 @@ contract SolidityDataTypes {
         unchecked {
             myUint8--;
         }
+    }
+
+    function setMyString(string memory _myString) public {
+        myString = _myString;
+    }
+
+    function compareStrings(string memory _myString) public view returns (bool) {
+        // Convert both strings to bytes and hash them
+        return keccak256(abi.encodePacked(myString)) == keccak256(abi.encodePacked(_myString));
     }
 }

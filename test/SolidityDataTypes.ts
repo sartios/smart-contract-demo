@@ -53,4 +53,19 @@ describe("SolidityDataTypes", function () {
     await solidityDataTypes.decreaseMyUint8();
     expect(await solidityDataTypes.myUint8()).to.equal(255);
   });
+
+  it('should return the default value of the string', async () => {
+    expect(await solidityDataTypes.myString()).to.equal("");
+  });
+
+  it('should update the string value', async () => {
+    await solidityDataTypes.setMyString("Hello, World!");
+    expect(await solidityDataTypes.myString()).to.equal("Hello, World!");
+  });
+
+  it('should compare two strings', async () => {
+    await solidityDataTypes.setMyString("Hello");
+    expect(await solidityDataTypes.compareStrings("Hello")).to.equal(true);
+    expect(await solidityDataTypes.compareStrings("World")).to.equal(false);
+  });
 });
