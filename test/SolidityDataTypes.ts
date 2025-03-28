@@ -33,4 +33,18 @@ describe("SolidityDataTypes", function () {
     const maxUint = hre.ethers.MaxUint256 + BigInt(1);
     await expect(solidityDataTypes.setMyUint(maxUint)).to.be.rejectedWith(`value out-of-bounds`);
   });
+
+  it("should return the int default value", async () => {
+    expect(await solidityDataTypes.myInt()).to.equal(0);
+  });
+
+  it("should update the int value", async () => {
+    await solidityDataTypes.setMyInt(-42);
+    expect(await solidityDataTypes.myInt()).to.equal(-42);
+  });
+
+  it("should throw an error when overflowing the int", async () => {
+    const maxInt = hre.ethers.MaxInt256 + BigInt(1);
+    await expect(solidityDataTypes.setMyInt(maxInt)).to.be.rejectedWith(`value out-of-bounds`);
+  });
 });
