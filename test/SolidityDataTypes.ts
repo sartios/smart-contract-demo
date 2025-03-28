@@ -48,5 +48,9 @@ describe("SolidityDataTypes", function () {
     await expect(solidityDataTypes.setMyInt(maxInt)).to.be.rejectedWith(`value out-of-bounds`);
   });
 
-  it("should wrap around", async () => {});
+  it("should rollover around", async () => {
+    expect(await solidityDataTypes.myUint8()).to.equal(0);
+    await solidityDataTypes.decreaseMyUint8();
+    expect(await solidityDataTypes.myUint8()).to.equal(255);
+  });
 });

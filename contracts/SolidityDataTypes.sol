@@ -6,7 +6,7 @@ contract SolidityDataTypes {
     bool public myBool;
     uint public myUint256;
     int public myInt;
-    
+    uint8 public myUint8;
 
     function setMyBool(bool _myBool) public {
         myBool = _myBool;
@@ -18,5 +18,11 @@ contract SolidityDataTypes {
 
     function setMyInt(int _myInt) public {
         myInt = _myInt;
+    }
+
+    function decreaseMyUint8() public {
+        unchecked {
+            myUint8--;
+        }
     }
 }
