@@ -9,6 +9,7 @@ contract SolidityDataTypes {
     uint8 public myUint8;
     string public myString;
     bytes public myBytes;
+    address public myAddress;
 
     function setMyBool(bool _myBool) public {
         myBool = _myBool;
@@ -39,5 +40,13 @@ contract SolidityDataTypes {
 
     function setMyBytes(bytes memory _myBytes) public {
         myBytes = _myBytes;
+    }
+
+    function setMyAddress(address _myAddress) public {
+        myAddress = _myAddress;
+    }
+
+    function getAddressBalance() public view returns (uint) {
+        return myAddress.balance;
     }
 }

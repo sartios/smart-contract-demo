@@ -79,4 +79,18 @@ describe("SolidityDataTypes", function () {
     expect(await solidityDataTypes.myBytes()).to.equal(hre.ethers.hexlify(bytesValue));
     expect(hre.ethers.toUtf8String(await solidityDataTypes.myBytes())).to.equal("Hello, World!");
   });
+
+  it("should return the default value of address", async () => {
+    expect(await solidityDataTypes.myAddress()).to.equal("0x0000000000000000000000000000000000000000");
+  });
+
+  it("should update the address value", async () => {
+    const [owner] = await hre.ethers.getSigners();
+    await solidityDataTypes.setMyAddress(owner.address);
+    expect(await solidityDataTypes.myAddress()).to.equal(owner.address);
+  });
+
+  it("should return the address balance", async () => {
+    expect(await solidityDataTypes.getAddressBalance()).to.equal(0);
+  });
 });
