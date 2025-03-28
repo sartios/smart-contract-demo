@@ -54,18 +54,29 @@ describe("SolidityDataTypes", function () {
     expect(await solidityDataTypes.myUint8()).to.equal(255);
   });
 
-  it('should return the default value of the string', async () => {
+  it("should return the default value of the string", async () => {
     expect(await solidityDataTypes.myString()).to.equal("");
   });
 
-  it('should update the string value', async () => {
+  it("should update the string value", async () => {
     await solidityDataTypes.setMyString("Hello, World!");
     expect(await solidityDataTypes.myString()).to.equal("Hello, World!");
   });
 
-  it('should compare two strings', async () => {
+  it("should compare two strings", async () => {
     await solidityDataTypes.setMyString("Hello");
     expect(await solidityDataTypes.compareStrings("Hello")).to.equal(true);
     expect(await solidityDataTypes.compareStrings("World")).to.equal(false);
+  });
+
+  it("should return the default value of the bytes32", async () => {
+    expect(await solidityDataTypes.myBytes()).to.equal("0x");
+  });
+
+  it("should update the bytes32 value", async () => {
+    const bytesValue = hre.ethers.toUtf8Bytes("Hello, World!");
+    await solidityDataTypes.setMyBytes(bytesValue);
+    expect(await solidityDataTypes.myBytes()).to.equal(hre.ethers.hexlify(bytesValue));
+    expect(hre.ethers.toUtf8String(await solidityDataTypes.myBytes())).to.equal("Hello, World!");
   });
 });
