@@ -1,8 +1,11 @@
-# Sample Hardhat Project
+# Smart Contract Demo
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
+[![Solidity](https://img.shields.io/badge/Solidity-363636?logo=solidity&logoColor=fff)](#)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=fff)](#)
 
-Try running some of the following tasks:
+This project demonstrates basic Solidity smart contract development with Hardhat.
+
+## CLI
 
 ```shell
 npx hardhat help
