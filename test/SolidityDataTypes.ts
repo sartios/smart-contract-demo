@@ -57,8 +57,14 @@ describe("SolidityDataTypes", function () {
 
   it("should rollover around", async () => {
     expect(await solidityDataTypes.myUint8()).to.equal(0);
-    await solidityDataTypes.decreaseMyUint8();
+    await solidityDataTypes.decreaseMyUint8Rollover();
     expect(await solidityDataTypes.myUint8()).to.equal(255);
+  });
+
+  it("should throw when rolling over", async () => {
+    await expect(solidityDataTypes.decreaseMyUint8()).to.be.rejectedWith(
+      "VM Exception while processing transaction: reverted with panic code 0x1 (Assertion error)"
+    );
   });
 
   it("should return the default value of the string", async () => {

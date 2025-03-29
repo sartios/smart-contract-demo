@@ -40,9 +40,17 @@ contract SolidityDataTypes {
         myInt = _myInt;
     }
 
-    function decreaseMyUint8() public {
+    function decreaseMyUint8Rollover() public {
         unchecked {
             myUint8--;
+        }
+    }
+
+    function decreaseMyUint8() public {
+        unchecked {
+            uint8 temp = myUint8 - 1;
+            assert(temp <= myUint8);
+            myUint8 = temp;
         }
     }
 
