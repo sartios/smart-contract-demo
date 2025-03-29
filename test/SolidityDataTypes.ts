@@ -4,7 +4,7 @@ import { expect } from "chai";
 describe("SolidityDataTypes", function () {
   let solidityDataTypes: any;
   beforeEach(async () => {
-    solidityDataTypes = await hre.ethers.deployContract("SolidityDataTypes", []);
+    solidityDataTypes = await hre.ethers.deployContract("SolidityDataTypes", ["test"]);
     await solidityDataTypes.waitForDeployment();
   });
 
@@ -173,5 +173,10 @@ describe("SolidityDataTypes", function () {
     const [caller] = await hre.ethers.getSigners();
     await solidityDataTypes.setAddressToTrue();
     expect(await solidityDataTypes.addressMapping(caller.address)).to.equal(true);
+  });
+
+  it("should return the owner identity", async () => {
+    const [owner] = await hre.ethers.getSigners();
+    expect(await solidityDataTypes.ownerIdentity()).to.deep.equal(["test", owner.address]);
   });
 });

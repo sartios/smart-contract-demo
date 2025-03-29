@@ -17,8 +17,15 @@ contract SolidityDataTypes {
     // Mapping allows mappings of mappings
     mapping(address => bool) public addressMapping;
 
-    constructor() {
+    struct OwnerIdentity {
+        string name;
+        address ownerAddress;
+    }
+    OwnerIdentity public ownerIdentity;
+
+    constructor(string memory _name) {
         owner = msg.sender;
+        ownerIdentity = OwnerIdentity(_name, msg.sender);
     }
 
     function setMyBool(bool _myBool) public {
