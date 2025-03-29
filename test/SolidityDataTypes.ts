@@ -163,4 +163,15 @@ describe("SolidityDataTypes", function () {
       `Transaction reverted: non-payable function was called with value 200000000000000000`
     );
   });
+
+  it("should return the default value of mapping", async () => {
+    const [caller] = await hre.ethers.getSigners();
+    expect(await solidityDataTypes.addressMapping(caller.address)).to.equal(false);
+  });
+
+  it("should add the address to mapping and set to true", async () => {
+    const [caller] = await hre.ethers.getSigners();
+    await solidityDataTypes.setAddressToTrue();
+    expect(await solidityDataTypes.addressMapping(caller.address)).to.equal(true);
+  });
 });

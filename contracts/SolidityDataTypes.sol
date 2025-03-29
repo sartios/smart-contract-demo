@@ -14,6 +14,8 @@ contract SolidityDataTypes {
     address public messageSender;
     address public owner;
     uint public depositCounter;
+    // Mapping allows mappings of mappings
+    mapping(address => bool) public addressMapping;
 
     constructor() {
         owner = msg.sender;
@@ -72,5 +74,9 @@ contract SolidityDataTypes {
         } else {
             payable(msg.sender).transfer(msg.value);
         }
+    }
+
+    function setAddressToTrue() public {
+        addressMapping[msg.sender] = true;
     }
 }
