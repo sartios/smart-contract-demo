@@ -85,4 +85,13 @@ describe("SmartMoney", function () {
     expect(await smartMoney.connect(thirdParty).getUserIdentity()).to.deep.equal(["Bob", "bob@eth.com"]);
     expect(await smartMoney.connect(randomUser).getUserIdentity()).to.deep.equal(["", ""]);
   });
+
+  it("should throw error if deposit amount is zero", async () => {
+    await expect(smartMoney.deposit({ value: 0 })).to.be.revertedWith("Deposit amount must be greater than zero");
+  });
+
+  it("should throw error if withdraw amount is zero", async () => {
+    const [, caller] = await hre.ethers.getSigners();
+    await expect(smartMoney.connect(caller).withdrawAll()).to.be.revertedWith("No balance to withdraw");
+  });
 });

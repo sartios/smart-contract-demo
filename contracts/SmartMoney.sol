@@ -36,6 +36,8 @@ contract SmartMoney {
     }
 
     function deposit() public payable {
+        require(msg.value > 0, "Deposit amount must be greater than zero");
+
         Transaction memory _deposit = Transaction(msg.value, msg.sender, block.timestamp);
         balances[msg.sender].totalBalance += msg.value;
         balances[msg.sender].deposits[balances[msg.sender].depositCounter] = _deposit;
@@ -95,12 +97,14 @@ contract SmartMoney {
 
     function _withdraw(address owner, address payable recipient) internal {
         uint withdrawalAmount = balances[owner].totalBalance;
+        require(withdrawalAmount > 0, "No balance to withdraw");
 
         // Re-entrancy attack prevention
         Transaction memory withdrawal = Transaction(withdrawalAmount, recipient, block.timestamp);
         balances[owner].withdrawals[balances[owner].withdrawalCounter] = withdrawal;
         balances[owner].withdrawalCounter++;
         balances[owner].totalBalance = 0;
+        assert(balances[owner].totalBalance == 0);
 
         recipient.transfer(withdrawalAmount);
     }
