@@ -8,6 +8,11 @@ pragma solidity 0.8.28;
  */
 contract SmartMoney {
     mapping(address => uint) balances;
+    struct Identity {
+        string name;
+        string email;
+    }
+    mapping(address => Identity) identities;
 
     constructor() payable {
         balances[msg.sender] = msg.value;
@@ -25,6 +30,15 @@ contract SmartMoney {
     function withdrawTo(address payable recipient) public {
         address payable owner = payable(msg.sender);
         _withdraw(owner, recipient);
+    }
+
+    function setUserIdentity(string memory name, string memory email) public {
+        identities[msg.sender] = Identity(name, email);
+    }
+
+    function getUserIdentity() public view returns (string memory, string memory) {
+        Identity memory identity = identities[msg.sender];
+        return (identity.name, identity.email);
     }
 
     function _withdraw(address owner, address payable recipient) internal {

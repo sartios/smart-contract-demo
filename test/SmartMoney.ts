@@ -53,4 +53,15 @@ describe("SmartMoney", function () {
     const currentThirdPartyBalance = await hre.ethers.provider.getBalance(thirdParty.address);
     expect(currentThirdPartyBalance).to.be.gt(initialThirdPartyBalance);
   });
+
+  it("should set/get user identity", async () => {
+    const [, thirdParty, randomUser] = await hre.ethers.getSigners();
+
+    await smartMoney.setUserIdentity("Alice", "alice@eth.com");
+    await smartMoney.connect(thirdParty).setUserIdentity("Bob", "bob@eth.com");
+
+    expect(await smartMoney.getUserIdentity()).to.deep.equal(["Alice", "alice@eth.com"]);
+    expect(await smartMoney.connect(thirdParty).getUserIdentity()).to.deep.equal(["Bob", "bob@eth.com"]);
+    expect(await smartMoney.connect(randomUser).getUserIdentity()).to.deep.equal(["", ""]);
+  });
 });
