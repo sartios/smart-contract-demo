@@ -61,6 +61,24 @@ contract SmartMoney {
         return (identity.name, identity.email);
     }
 
+    function getDeposits() public view returns (Transaction[] memory) {
+        Balance storage userBalance = balances[msg.sender];
+        Transaction[] memory depositsArray = new Transaction[](userBalance.depositCounter);
+        for (uint i = 0; i < userBalance.depositCounter; i++) {
+            depositsArray[i] = userBalance.deposits[i];
+        }
+        return depositsArray;
+    }
+
+    function getWithdrawals() public view returns (Transaction[] memory) {
+        Balance storage userBalance = balances[msg.sender];
+        Transaction[] memory withdrawalsArray = new Transaction[](userBalance.withdrawalCounter);
+        for (uint i = 0; i < userBalance.withdrawalCounter; i++) {
+            withdrawalsArray[i] = userBalance.withdrawals[i];
+        }
+        return withdrawalsArray;
+    }
+
     receive() external payable {
         _processRandomDeposit(msg.sender, msg.value);
     }
@@ -79,7 +97,7 @@ contract SmartMoney {
         uint withdrawalAmount = balances[owner].totalBalance;
 
         // Re-entrancy attack prevention
-        Transaction memory withdrawal = Transaction(msg.value, recipient, block.timestamp);
+        Transaction memory withdrawal = Transaction(withdrawalAmount, recipient, block.timestamp);
         balances[owner].withdrawals[balances[owner].withdrawalCounter] = withdrawal;
         balances[owner].withdrawalCounter++;
         balances[owner].totalBalance = 0;
