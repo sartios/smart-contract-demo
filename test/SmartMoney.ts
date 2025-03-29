@@ -20,30 +20,29 @@ describe("SmartMoney", function () {
   });
 
   it("should allow withdrawing the whole amount", async () => {
-    const initialBalance = await hre.ethers.provider.getBalance(smartMoney.target);
-    expect(initialBalance).to.equal(hre.ethers.parseEther("1"));
+    const initialContractBalance = await hre.ethers.provider.getBalance(smartMoney.target);
+    expect(initialContractBalance).to.equal(hre.ethers.parseEther("1"));
 
-    const [, caller] = await hre.ethers.getSigners();
+    const [caller] = await hre.ethers.getSigners();
     const initialCallerBalance = await hre.ethers.provider.getBalance(caller.address);
 
-    await smartMoney.connect(caller).withdrawAll();
+    await smartMoney.withdrawAll();
+    const currentCallerBalance = await hre.ethers.provider.getBalance(caller.address);
+    expect(currentCallerBalance).to.be.gt(initialCallerBalance);
 
     const newBalance = await hre.ethers.provider.getBalance(smartMoney.target);
     expect(newBalance).to.equal(0);
-
-    const currentCallerBalance = await hre.ethers.provider.getBalance(caller.address);
-    expect(currentCallerBalance).to.be.gt(initialCallerBalance);
   });
 
   it("should allow withdrawals to an address", async () => {
     const initialBalance = await hre.ethers.provider.getBalance(smartMoney.target);
     expect(initialBalance).to.equal(hre.ethers.parseEther("1"));
 
-    const [, caller, thirdParty] = await hre.ethers.getSigners();
+    const [caller, thirdParty] = await hre.ethers.getSigners();
     const initialCallerBalance = await hre.ethers.provider.getBalance(caller.address);
     const initialThirdPartyBalance = await hre.ethers.provider.getBalance(thirdParty.address);
 
-    await smartMoney.connect(caller).withdrawTo(thirdParty.address);
+    await smartMoney.withdrawTo(thirdParty.address);
 
     const newBalance = await hre.ethers.provider.getBalance(smartMoney.target);
     expect(newBalance).to.equal(0);

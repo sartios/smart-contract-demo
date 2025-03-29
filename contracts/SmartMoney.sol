@@ -2,20 +2,43 @@
 
 pragma solidity 0.8.28;
 
+/**
+ * Allow users to deposit and withdraw Ether.
+ * Users can withdraw all their balance or send it to a different address.
+ */
 contract SmartMoney {
-    constructor() payable {}
+    mapping(address => uint) balances;
 
-    function deposit() public payable {}
+    constructor() payable {
+        balances[msg.sender] = msg.value;
+    }
+
+    function deposit() public payable {
+        balances[msg.sender] += msg.value;
+    }
 
     function withdrawAll() public {
-        address payable recipient = payable(msg.sender);
-        recipient.transfer(address(this).balance);
+        address payable owner = payable(msg.sender);
+        _withdraw(owner, owner);
     }
 
     function withdrawTo(address payable recipient) public {
-        recipient.transfer(address(this).balance);
+        address payable owner = payable(msg.sender);
+        _withdraw(owner, recipient);
     }
 
-    receive() external payable {}
-    fallback() external payable {}
+    function _withdraw(address owner, address payable recipient) internal {
+        uint withdrawalAmount = balances[owner];
+        // Re-entrancy attack prevention
+        balances[owner] = 0;
+        recipient.transfer(withdrawalAmount);
+    }
+
+    receive() external payable {
+        balances[msg.sender] += msg.value;
+    }
+
+    fallback() external payable {
+        balances[msg.sender] += msg.value;
+    }
 }
