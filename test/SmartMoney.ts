@@ -52,12 +52,21 @@ describe("SmartMoney", function () {
 
     const currentThirdPartyBalance = await hre.ethers.provider.getBalance(thirdParty.address);
     expect(currentThirdPartyBalance).to.be.gt(initialThirdPartyBalance);
+  });
+
+  it("should return deposit history", async () => {
+    const [caller] = await hre.ethers.getSigners();
 
     const deposits = await smartMoney.getDeposits();
     expect(deposits.length).to.equal(1);
     expect(deposits[0].amount).to.equal(hre.ethers.parseEther("1"));
     expect(deposits[0].recipient).to.equal(caller.address);
     expect(deposits[0].timestamp).to.exist;
+  });
+
+  it("should return withdrawal history", async () => {
+    const [, thirdParty] = await hre.ethers.getSigners();
+    await smartMoney.withdrawTo(thirdParty.address);
 
     const withdrawals = await smartMoney.getWithdrawals();
     expect(withdrawals.length).to.equal(1);
