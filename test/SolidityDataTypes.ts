@@ -102,4 +102,9 @@ describe("SolidityDataTypes", function () {
     await solidityDataTypes.connect(otherAccount).updateMessageSender();
     expect(await solidityDataTypes.messageSender()).to.equal(otherAccount.address);
   });
+
+  it("should call a pure function", async () => {
+    const result = await solidityDataTypes.multiply(2, 3);
+    expect(result).to.equal(6);
+  });
 });
