@@ -13,6 +13,7 @@ contract SolidityDataTypes {
     address public myAddress;
     address public messageSender;
     address public owner;
+    uint public depositCounter;
 
     constructor() {
         owner = msg.sender;
@@ -63,5 +64,13 @@ contract SolidityDataTypes {
 
     function multiply(uint a, uint b) public pure returns (uint) {
         return a * b;
+    }
+
+    function deposit() public payable {
+        if (msg.value > 1 ether) {
+            depositCounter++;
+        } else {
+            payable(msg.sender).transfer(msg.value);
+        }
     }
 }

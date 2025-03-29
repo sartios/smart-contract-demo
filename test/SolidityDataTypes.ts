@@ -5,6 +5,7 @@ describe("SolidityDataTypes", function () {
   let solidityDataTypes: any;
   beforeEach(async () => {
     solidityDataTypes = await hre.ethers.deployContract("SolidityDataTypes", []);
+    await solidityDataTypes.waitForDeployment();
   });
 
   it("should assign the owner of the contract", async () => {
@@ -112,5 +113,54 @@ describe("SolidityDataTypes", function () {
   it("should call a pure function", async () => {
     const result = await solidityDataTypes.multiply(2, 3);
     expect(result).to.equal(6);
+  });
+
+  it("should allow deposit more than 1 eth", async () => {
+    const [, otherAccount] = await hre.ethers.getSigners();
+    const contractAddress = solidityDataTypes.target;
+
+    const prevContractBalance = await hre.ethers.provider.getBalance(contractAddress);
+    expect(prevContractBalance).to.be.equal(0);
+
+    const prevCallerBalance = await hre.ethers.provider.getBalance(otherAccount.address);
+    expect(prevCallerBalance).to.be.greaterThan(0);
+
+    await solidityDataTypes.connect(otherAccount).deposit({ value: hre.ethers.parseEther("2") });
+
+    const ownerCurBalance = await hre.ethers.provider.getBalance(contractAddress);
+    expect(ownerCurBalance).to.be.equal(hre.ethers.parseEther("2"));
+
+    const curCallerBalance = await hre.ethers.provider.getBalance(otherAccount.address);
+    expect(prevCallerBalance).to.be.greaterThan(curCallerBalance + hre.ethers.parseEther("2"));
+
+    expect(await solidityDataTypes.depositCounter()).to.equal(1);
+  });
+
+  it("should not allow deposit less than 1 eth", async () => {
+    const [, otherAccount] = await hre.ethers.getSigners();
+    const contractAddress = solidityDataTypes.target;
+
+    const prevContractBalance = await hre.ethers.provider.getBalance(contractAddress);
+    expect(prevContractBalance).to.be.equal(0);
+
+    const prevCallerBalance = await hre.ethers.provider.getBalance(otherAccount.address);
+    expect(prevCallerBalance).to.be.greaterThan(0);
+
+    await solidityDataTypes.connect(otherAccount).deposit({ value: hre.ethers.parseEther("0.2") });
+
+    const ownerCurBalance = await hre.ethers.provider.getBalance(contractAddress);
+    expect(ownerCurBalance).to.be.equal(0);
+
+    const curCallerBalance = await hre.ethers.provider.getBalance(otherAccount.address);
+    expect(prevCallerBalance).to.be.greaterThan(curCallerBalance);
+    expect(prevCallerBalance).to.be.lessThan(curCallerBalance + hre.ethers.parseEther("0.2"));
+
+    expect(await solidityDataTypes.depositCounter()).to.equal(0);
+  });
+
+  it("should throw when function is not payable and interaction sends ether", async () => {
+    await expect(solidityDataTypes.setMyUint256(BigInt(1), { value: hre.ethers.parseEther("0.2") })).to.be.rejectedWith(
+      `Transaction reverted: non-payable function was called with value 200000000000000000`
+    );
   });
 });
