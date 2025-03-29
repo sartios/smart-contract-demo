@@ -93,4 +93,13 @@ describe("SolidityDataTypes", function () {
   it("should return the address balance", async () => {
     expect(await solidityDataTypes.getAddressBalance()).to.equal(0);
   });
+
+  it("should set the message sender address", async () => {
+    const [owner, otherAccount] = await hre.ethers.getSigners();
+    await solidityDataTypes.updateMessageSender();
+    expect(await solidityDataTypes.messageSender()).to.equal(owner.address);
+
+    await solidityDataTypes.connect(otherAccount).updateMessageSender();
+    expect(await solidityDataTypes.messageSender()).to.equal(otherAccount.address);
+  });
 });
