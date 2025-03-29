@@ -7,7 +7,21 @@ pragma solidity 0.8.28;
  * Users can withdraw all their balance or send it to a different address.
  */
 contract SmartMoney {
-    mapping(address => uint) balances;
+    struct Transaction {
+        uint amount;
+        address recipient;
+        uint timestamp;
+    }
+
+    struct Balance {
+        uint totalBalance;
+        uint depositCounter;
+        mapping(uint => Transaction) deposits;
+        uint withdrawalCounter;
+        mapping(uint => Transaction) withdrawals;
+    }
+
+    mapping(address => Balance) balances;
     struct Identity {
         string name;
         string email;
@@ -15,11 +29,17 @@ contract SmartMoney {
     mapping(address => Identity) identities;
 
     constructor() payable {
-        balances[msg.sender] = msg.value;
+        Transaction memory initialDeposit = Transaction(msg.value, msg.sender, block.timestamp);
+        balances[msg.sender].deposits[balances[msg.sender].depositCounter] = initialDeposit;
+        balances[msg.sender].depositCounter++;
+        balances[msg.sender].totalBalance = msg.value;
     }
 
     function deposit() public payable {
-        balances[msg.sender] += msg.value;
+        Transaction memory _deposit = Transaction(msg.value, msg.sender, block.timestamp);
+        balances[msg.sender].totalBalance += msg.value;
+        balances[msg.sender].deposits[balances[msg.sender].depositCounter] = _deposit;
+        balances[msg.sender].depositCounter++;
     }
 
     function withdrawAll() public {
@@ -41,18 +61,29 @@ contract SmartMoney {
         return (identity.name, identity.email);
     }
 
-    function _withdraw(address owner, address payable recipient) internal {
-        uint withdrawalAmount = balances[owner];
-        // Re-entrancy attack prevention
-        balances[owner] = 0;
-        recipient.transfer(withdrawalAmount);
-    }
-
     receive() external payable {
-        balances[msg.sender] += msg.value;
+        _processRandomDeposit(msg.sender, msg.value);
     }
 
     fallback() external payable {
-        balances[msg.sender] += msg.value;
+        _processRandomDeposit(msg.sender, msg.value);
+    }
+
+    function _processRandomDeposit(address sender, uint amount) internal {
+        balances[sender].deposits[balances[sender].depositCounter] = Transaction(amount, sender, block.timestamp);
+        balances[sender].depositCounter++;
+        balances[sender].totalBalance += amount;
+    }
+
+    function _withdraw(address owner, address payable recipient) internal {
+        uint withdrawalAmount = balances[owner].totalBalance;
+
+        // Re-entrancy attack prevention
+        Transaction memory withdrawal = Transaction(msg.value, recipient, block.timestamp);
+        balances[owner].withdrawals[balances[owner].withdrawalCounter] = withdrawal;
+        balances[owner].withdrawalCounter++;
+        balances[owner].totalBalance = 0;
+
+        recipient.transfer(withdrawalAmount);
     }
 }
