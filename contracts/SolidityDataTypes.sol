@@ -4,13 +4,19 @@ pragma solidity 0.8.28;
 
 contract SolidityDataTypes {
     bool public myBool;
-    uint public myUint256;
-    int public myInt;
-    uint8 public myUint8;
+    uint public myUint256; // 0 to 2^256-1
+    int public myInt; // -2^255 to 2^255-1
+    uint8 public myUint8; // 0 to 2^8-1
+    // fixed point numbers are not supported
     string public myString;
     bytes public myBytes;
     address public myAddress;
     address public messageSender;
+    address public owner;
+
+    constructor() {
+        owner = msg.sender;
+    }
 
     function setMyBool(bool _myBool) public {
         myBool = _myBool;

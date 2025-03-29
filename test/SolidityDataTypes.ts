@@ -7,6 +7,12 @@ describe("SolidityDataTypes", function () {
     solidityDataTypes = await hre.ethers.deployContract("SolidityDataTypes", []);
   });
 
+  it("should assign the owner of the contract", async () => {
+    const [owner] = await hre.ethers.getSigners();
+    const contractOwner = await solidityDataTypes.owner();
+    expect(contractOwner).to.equal(owner.address);
+  });
+
   it("should return the boolean default value", async () => {
     expect(await solidityDataTypes.myBool()).to.equal(false);
   });
